@@ -1,0 +1,26 @@
+/* Add a smooth fade-in effect for the result */
+#result {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  /* Make the result visible when updated */
+  #result.show {
+    opacity: 1;
+  }
+  
+  /* Add hover animation for the button */
+  button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.1);
+    background-color: #e64a19;
+  }

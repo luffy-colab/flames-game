@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FLAMES Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    h1 {
+      color: #ff6b6b;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    input {
+      width: 80%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input:focus {
+      border-color: #ff6b6b;
+      outline: none;
+      box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    }
+    
+    button {
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin-top: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    button:hover {
+      background-color: #ff5252;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #result {
+      margin-top: 25px;
+      min-height: 60px;
+      font-size: 1.5rem;
+      color: #ff6b6b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.5s ease-out;
+    }
+    
+    #result.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .flames-animation {
+      display: inline-block;
+      animation: flame 1.5s infinite alternate;
+    }
+    
+    @keyframes flame {
+      0% {
+        transform: scale(1);
+        text-shadow: 0 0 5px #ff6b6b;
+      }
+      100% {
+        transform: scale(1.1);
+        text-shadow: 0 0 15px #ff6b6b, 0 0 30px #ff9e9e;
+      }
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 107, 107, 0.3);
+      border-radius: 50%;
+      border-top-color: #ff6b6b;
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .heart {
+      color: red;
+      display: inline-block;
+      animation: heartbeat 1.5s infinite;
+    }
+    
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.1); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><span class="flames-animation">🔥</span> FLAMES Game <span class="flames-animation">🔥</span></h1>
+    <input type="text" id="name1" placeholder="Enter First Name" autocomplete="off">
+    <input type="text" id="name2" placeholder="Enter Second Name" autocomplete="off">
+    <button onclick="calculateFLAMES()">Check Relationship</button>
+    <h2 id="result"></h2>
+  </div>
+
+  <script>
+    function calculateFLAMES() {
+      let name1 = document.getElementById("name1").value.toLowerCase().replace(/\s/g, '');
+      let name2 = document.getElementById("name2").value.toLowerCase().replace(/\s/g, '');
+      const resultElement = document.getElementById("result");
+      
+      // Clear previous result
+      resultElement.textContent = '';
+      resultElement.className = '';
+      
+      if (!name1 || !name2) {
+        resultElement.textContent = "Please enter both names.";
+        resultElement.className = 'show';
+        return;
+      }
+      
+      if (name1 === name2) {
+        resultElement.textContent = "Names must be different!";
+        resultElement.className = 'show';
+        return;
+      }
+      
+      // Show loading
+      resultElement.innerHTML = '<div class="loading"></div>';
+      resultElement.className = 'show';
+      
+      // Simulate calculation delay for better UX
+      setTimeout(() => {
+        // Remove common letters (your exact logic)
+        for (let i = 0; i < name1.length; i++) {
+          let char = name1[i];
+          if (name2.includes(char)) {
+            name1 = name1.replace(char, '');
+            name2 = name2.replace(char, '');
+            i--;
+          }
+        }
+        
+        let count = name1.length + name2.length;
+        const flames = ['Friend', 'Love', 'Affection', 'Marriage', 'Enemy', 'Sister'];
+        let index = 0;
+        
+        // Your exact FLAMES calculation logic
+        while (flames.length > 1) {
+          index = (index + count - 1) % flames.length;
+          flames.splice(index, 1);
+        }
+        
+        // Display result with animation
+        let emoji = '';
+        switch(flames[0]) {
+          case 'Friend': emoji = '🤝'; break;
+          case 'Love': emoji = '💑'; break;
+          case 'Affection': emoji = '😊'; break;
+          case 'Marriage': emoji = '💍'; break;
+          case 'Enemy': emoji = '⚔️'; break;
+          case 'Sister': emoji = '👭'; break;
+        }
+        
+        const displayName1 = document.getElementById('name1').value.trim();
+        const displayName2 = document.getElementById('name2').value.trim();
+        
+        resultElement.innerHTML = `${displayName1} & ${displayName2}<br>Relationship: <span class="heart">${emoji} ${flames[0]} ${emoji}</span>`;
+        resultElement.className = 'show';
+        
+        // Add confetti effect for love/marriage
+        if (flames[0] === 'Love' || flames[0] === 'Marriage') {
+          triggerConfetti();
+        }
+      }, 1500);
+    }
+    
+    function triggerConfetti() {
+      // Simple confetti effect
+      const colors = ['#ff6b6b', '#ffb347', '#ffdd59', '#7ed6df', '#686de0'];
+      const container = document.querySelector('.container');
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = '50%';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-20px';
+        confetti.style.opacity = '0.8';
+        confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+        
+        container.appendChild(confetti);
+        
+        const animationDuration = Math.random() * 3 + 2;
+        
+        confetti.animate([
+          { top: '-20px', opacity: 0.8 },
+          { top: '100%', opacity: 0 }
+        ], {
+          duration: animationDuration * 1000,
+          easing: 'cubic-bezier(0.1, 0.8, 0.9, 1)'
+        });
+        
+        setTimeout(() => {
+          confetti.remove();
+        }, animationDuration * 1000);
+      }
+    }
+    
+    // Add input animation on focus
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.querySelector('h1').classList.add('flames-animation');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.querySelector('h1').classList.remove('flames-animation');
+      });
+    });
+  </script>
+</body>
+</html>
